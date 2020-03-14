@@ -1,30 +1,31 @@
 #!/usr/bin/env python
-
-import requests
 from urllib.request import urlopen as uReq
-import bs4
+
 from bs4 import BeautifulSoup as soup
-import lxml
-from time import sleep
 
 filename ="customerData.csv"
-f= open(filename,"w")
-
-header="company,country,URL,first,last,title,number,Products\n"
-f.write("")#
+f= open(filename,"w", encoding='utf-8')
+FrozenHeader=["Frozen"]
+for i in range(19):
+    FrozenHeader.append(' ')
+header="number, company,country,address, state, CP, certificate, certifications,URL,first,last,title,number," + str(FrozenHeader)[1:-1]  + ",NonFrozen\n"
+f.write("")
 f.write(header)
 number = 0
 root = 'https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=' + str(number)
-
-for i in range(50000):
+#"https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=17196'"
+#955
+   # 2025
+for i in range(1):
     root = "https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=" + str(number)
     number += 1
     print(root)
 
-    myurl = 'https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=4686'
+    myurl = 'https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=2025'
+
 
     # opening connection and grabbing a page
-    uClient = uReq(root)
+    uClient = uReq(myurl)
     page_html = uClient.read()
     uClient.close()
 
@@ -43,22 +44,64 @@ for i in range(50000):
         Country = page_soup.find(id='cphContent_UCMemberFiche1_Country_NoMember')
         Country = Country.text
     except AttributeError:
-        print("None")
-        Country= " none"
+
+        Country= "-"
         pass
+
+
+
     try:
-        URL = page_soup.find(id='cphContent_UCMemberFiche1_HLweb_NoMember')
+        address = page_soup.find(id='cphContent_UCMemberFiche1_Address_NoMember')
+        address = address.text
+    except AttributeError:
+
+        address = "-"
+        pass
+
+    try:
+        state = page_soup.find(id='cphContent_UCMemberFiche1_Dept_NoMember')
+        state = state.text
+
+    except AttributeError:
+        state = " - "
+        pass
+
+    try:
+        CP = page_soup.find(id=' cphContent_UCMemberFiche1_ZipCode_NoMember ')
+        CP = Country.text
+    except AttributeError:
+
+        CP = "-"
+        pass
+
+    try:
+        certificate = page_soup.find(id=' cphContent_UCMemberFiche1_Certificate_NoMember ')
+        certificate = certificate.text
+    except AttributeError:
+
+        certificate = "-"
+        pass
+
+    try:
+        certifications = page_soup.find(id='cphContent_UCMemberFiche1_Certifications_NoMember')
+        certifications = certifications.text
+    except AttributeError:
+        certifications = "-"
+        pass
+
+    try:
+        URL = page_soup.find(id= 'cphContent_UCMemberFiche1_HLweb_NoMember')
         URL = URL.text
     except AttributeError:
-        print("None")
-        URL = " none"
+
+        URL = "-"
         pass
     try:
         First_Name = page_soup.find(id='cphContent_UCMemberFiche1_FirstName_NoMember')
         First_Name = First_Name.text
     except AttributeError:
-        print("None")
-        First_Name = " none"
+
+        First_Name = "-"
         pass
 
 
@@ -67,40 +110,53 @@ for i in range(50000):
         Last_Name = page_soup.find(id='cphContent_UCMemberFiche1_Name_NoMember')
         Last_Name = Last_Name.text
     except AttributeError:
-        print("None")
-        Last_Name = " none"
+
+        Last_Name = "-"
         pass
     try:
         Title = page_soup.find(id='cphContent_UCMemberFiche1_Titre_NoMember')
         Title = Title.text
     except AttributeError:
-        print("None")
-        Title = " none"
+
+        Title = "-"
         pass
 
     try:
         Number = page_soup.find(id='cphContent_UCMemberFiche1_TelProf1_NoMember')
         Number = Number.text
     except AttributeError:
-        print("None")
-        Number = " none"
+
+        Number = "-"
         pass
 
 
+    array=[]
     try:
+
         Frozen = page_soup.find(id='cphContent_UCMemberFiche1_productFrozen_NoMember')
         Frozen = Frozen.text
+
+        for name in Frozen.split(','):
+            name = name.strip()
+            array.append(name)
+
+
     except AttributeError:
-        print("None")
-        Frozen = " none"
+
+        Frozen = "-"
         pass
+    while (len(array)<20):
+        array.append(" ")
+
+
+
 
     try:
         NonFrozen = page_soup.find(id='cphContent_UCMemberFiche1_productNonFrozen_NoMember')
         NonFrozen = NonFrozen.text
     except AttributeError:
-        print("None")
-        NonFrozen = " none"
+
+        NonFrozen = "-"
         pass
 
 
@@ -109,7 +165,12 @@ for i in range(50000):
 
 
 
-    f.write(comp_name+ "," +Country + "," + URL+ "," + First_Name + "," + Last_Name + "," + Title + "," +Number  + "," + Frozen+ "," + NonFrozen + "\n")
+    f.write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}, {14}\n".format(str(number - 1), comp_name,
+                                                                                          Country, address, state, CP,
+                                                                                          certificate, certifications,
+                                                                                          URL, First_Name, Last_Name,
+                                                                                          Title, Number,  str(array)[1:-1],
+                                                                                          NonFrozen))
     #print(Country.text)
     # print(URL.text)
     # print(First_Name.text)
@@ -118,3 +179,4 @@ for i in range(50000):
     # print(Number.text)
     # print(Frozen.text)
     # print(NonFrozen.text)
+
