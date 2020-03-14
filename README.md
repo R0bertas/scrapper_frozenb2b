@@ -11,3 +11,8 @@ e. Last (name)
 f. Title
 g. Number
 h. Range of Products: 1. Frozen; 2. Not Frozen
+
+added:
+address
+state
+CP
