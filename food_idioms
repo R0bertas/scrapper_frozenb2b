@@ -13,16 +13,13 @@ f.write("")
 f.write(header)
 number = 0
 root = 'https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=' + str(number)
-#"https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=17196'"
-#955
-   # 2025
+ 
 for i in range(50000):
     root = "https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=" + str(number)
     number += 1
     print(root)
 
-    myurl = 'https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=2025'
-
+ 
 
     # opening connection and grabbing a page
     uClient = uReq(root)
@@ -171,12 +168,4 @@ for i in range(50000):
                                                                                           URL, First_Name, Last_Name,
                                                                                           Title, Number,  str(array)[1:-1],
                                                                                           NonFrozen))
-    #print(Country.text)
-    # print(URL.text)
-    # print(First_Name.text)
-    # print(Last_Name.text)
-    # print(Title.text)
-    # print(Number.text)
-    # print(Frozen.text)
-    # print(NonFrozen.text)
-
+ 
