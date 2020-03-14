@@ -8,9 +8,9 @@ import lxml
 from time import sleep
 
 filename ="customerData.csv"
-f= open(filename,"w", encoding='utf-8')
+f= open(filename,"w")
 
-header="number, company,country,URL,first,last,title,number,Products\n"
+header="company,country,URL,first,last,title,number,Products\n"
 f.write("")#
 f.write(header)
 number = 0
@@ -43,22 +43,22 @@ for i in range(50000):
         Country = page_soup.find(id='cphContent_UCMemberFiche1_Country_NoMember')
         Country = Country.text
     except AttributeError:
-
-        Country= "-"
+        print("None")
+        Country= " none"
         pass
     try:
         URL = page_soup.find(id='cphContent_UCMemberFiche1_HLweb_NoMember')
         URL = URL.text
     except AttributeError:
-
-        URL = "-"
+        print("None")
+        URL = " none"
         pass
     try:
         First_Name = page_soup.find(id='cphContent_UCMemberFiche1_FirstName_NoMember')
         First_Name = First_Name.text
     except AttributeError:
-
-        First_Name = "-"
+        print("None")
+        First_Name = " none"
         pass
 
 
@@ -67,23 +67,23 @@ for i in range(50000):
         Last_Name = page_soup.find(id='cphContent_UCMemberFiche1_Name_NoMember')
         Last_Name = Last_Name.text
     except AttributeError:
-
-        Last_Name = "-"
+        print("None")
+        Last_Name = " none"
         pass
     try:
         Title = page_soup.find(id='cphContent_UCMemberFiche1_Titre_NoMember')
         Title = Title.text
     except AttributeError:
-
-        Title = "-"
+        print("None")
+        Title = " none"
         pass
 
     try:
         Number = page_soup.find(id='cphContent_UCMemberFiche1_TelProf1_NoMember')
         Number = Number.text
     except AttributeError:
-
-        Number = "-"
+        print("None")
+        Number = " none"
         pass
 
 
@@ -91,16 +91,16 @@ for i in range(50000):
         Frozen = page_soup.find(id='cphContent_UCMemberFiche1_productFrozen_NoMember')
         Frozen = Frozen.text
     except AttributeError:
-
-        Frozen = "-"
+        print("None")
+        Frozen = " none"
         pass
 
     try:
         NonFrozen = page_soup.find(id='cphContent_UCMemberFiche1_productNonFrozen_NoMember')
         NonFrozen = NonFrozen.text
     except AttributeError:
-
-        NonFrozen = "-"
+        print("None")
+        NonFrozen = " none"
         pass
 
 
@@ -109,9 +109,7 @@ for i in range(50000):
 
 
 
-    f.write(str(number) + "," + str(comp_name)+ "," +Country + ","
-            + URL+ "," + First_Name + "," + Last_Name + ","
-            + Title + "," +Number  + "," + Frozen+ "," + NonFrozen + "\n")
+    f.write(comp_name+ "," +Country + "," + URL+ "," + First_Name + "," + Last_Name + "," + Title + "," +Number  + "," + Frozen+ "," + NonFrozen + "\n")
     #print(Country.text)
     # print(URL.text)
     # print(First_Name.text)
