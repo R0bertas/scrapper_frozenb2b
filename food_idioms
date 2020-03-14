@@ -1,25 +1,28 @@
 #!/usr/bin/env python
+
+import requests
 from urllib.request import urlopen as uReq
-
+import bs4
 from bs4 import BeautifulSoup as soup
+import lxml
+from time import sleep
 
-filename ="customerData.csv"
-f= open(filename,"w", encoding='utf-8')
-FrozenHeader=["Frozen"]
+filename = "customerData.csv"
+f = open(filename, "w", encoding='utf-8')
+FrozenHeader = ["Frozen"]
 for i in range(19):
     FrozenHeader.append(' ')
-header="number, company,country,address, state, CP, certificate, certifications,URL,first,last,title,number," + str(FrozenHeader)[1:-1]  + ",NonFrozen\n"
-f.write("")
+header = "number, company,country,URL,first,last,title,number, address,city,CP,state,certificate,certifications," + ','.join(FrozenHeader) + ", NonFrozen\n"
+
 f.write(header)
 number = 0
 root = 'https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=' + str(number)
- 
-for i in range(50000):
+
+for i in range(20):
     root = "https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=" + str(number)
     number += 1
     print(root)
 
- 
 
     # opening connection and grabbing a page
     uClient = uReq(root)
@@ -28,144 +31,127 @@ for i in range(50000):
 
     # html parsing (conversion)
     page_soup = soup(page_html, "html.parser")
-    #print(page_soup.body.div)
+    # print(page_soup.body.div)
     try:
         comp_name = page_soup.find(id='cphContent_UCMemberFiche1_Company')
-        comp_name = comp_name.get("value")
+        comp_name = comp_name.get("value").strip().replace(",", "")
+        try:
+            Country = page_soup.find(id='cphContent_UCMemberFiche1_Country_NoMember')
+            Country = Country.text.strip().replace(",", "")
+        except AttributeError:
+            Country = "-"
+            pass
+        try:
+            URL = page_soup.find(id='cphContent_UCMemberFiche1_HLweb_NoMember')
+            URL = URL.text.strip().replace(",", "")
+        except AttributeError:
+
+            URL = "-"
+            pass
+        try:
+            First_Name = page_soup.find(id='cphContent_UCMemberFiche1_FirstName_NoMember')
+            First_Name = First_Name.text.replace(",", "")
+        except AttributeError:
+
+            First_Name = "-"
+            pass
+
+        try:
+
+            Last_Name = page_soup.find(id='cphContent_UCMemberFiche1_Name_NoMember')
+            Last_Name = Last_Name.text.replace(",", "")
+        except AttributeError:
+
+            Last_Name = "-"
+            pass
+        try:
+            Title = page_soup.find(id='cphContent_UCMemberFiche1_Titre_NoMember')
+            Title = Title.text.replace(",", "")
+        except AttributeError:
+
+            Title = "-"
+            pass
+
+        try:
+            Number = page_soup.find(id='cphContent_UCMemberFiche1_TelProf1_NoMember')
+            Number = Number.text.strip().replace(",", "")
+        except AttributeError:
+            Number = "-"
+            pass
+
+        try:
+            address = page_soup.find("span", id='cphContent_UCMemberFiche1_Address_NoMember')
+            address = address.text.replace(",", "")
+        except AttributeError:
+            address = "-"
+            pass
+
+        try:
+            city = page_soup.find(id='cphContent_UCMemberFiche1_City_NoMember' )
+            city = city.text.replace(",", "")
+        except AttributeError:
+            city = "-"
+            pass
+
+        try:
+            CP = page_soup.find( id='cphContent_UCMemberFiche1_ZipCode_NoMember')
+            CP = CP.text.replace(",", "")
+        except AttributeError:
+            CP = "-"
+            pass
+
+
+        try:
+            state = page_soup.find(id='cphContent_UCMemberFiche1_Dept_NoMember')
+            state = state.text.replace(",", "")
+        except AttributeError:
+            state = "-"
+            pass
+
+
+        try:
+            certificate1 = page_soup.find(id='cphContent_UCMemberFiche1_Certificate_NoMember')
+            certificate1 = certificate1.text.replace(",", "")
+        except AttributeError:
+            certificate1 = "-"
+            pass
+
+        sertificateArray = []
+        try:
+            certifications1 = page_soup.find(id='cphContent_UCMemberFiche1_Certifications_NoMember')
+            certifications1 = certifications1.text.replace(",", "")
+        except AttributeError:
+            certifications1 = "-"
+            pass
+        array = []
+        try:
+
+            Frozen = page_soup.find(id='cphContent_UCMemberFiche1_productFrozen_NoMember')
+            Frozen = Frozen.text
+
+            for name in Frozen.split(','):
+                name = name.strip()
+                array.append(name)
+        except AttributeError:
+            Frozen = "-"
+            pass
+
+        while ( len(array) < 20 ):
+            array.append(" ")
+
+
+        try:
+            NonFrozen = page_soup.find(id='cphContent_UCMemberFiche1_productNonFrozen_NoMember')
+            NonFrozen = NonFrozen.text
+        except AttributeError:
+            NonFrozen = "-"
+            pass
+
+        f.write(str(number - 1) + "," + str(comp_name) + "," + str(Country) + ","
+                + URL + "," + First_Name + "," + Last_Name + ","
+                + Title + "," + Number + "," + address + "," + city+ "," + CP + "," + state + ","
+                + certificate1 + "," + certifications1 + "," + ','.join(array) + "," + NonFrozen + "\n")
+
     except AttributeError:
-        print("None")
-        comp_name = " none"
         pass
-
-    try:
-        Country = page_soup.find(id='cphContent_UCMemberFiche1_Country_NoMember')
-        Country = Country.text
-    except AttributeError:
-
-        Country= "-"
-        pass
-
-
-
-    try:
-        address = page_soup.find(id='cphContent_UCMemberFiche1_Address_NoMember')
-        address = address.text
-    except AttributeError:
-
-        address = "-"
-        pass
-
-    try:
-        state = page_soup.find(id='cphContent_UCMemberFiche1_Dept_NoMember')
-        state = state.text
-
-    except AttributeError:
-        state = " - "
-        pass
-
-    try:
-        CP = page_soup.find(id=' cphContent_UCMemberFiche1_ZipCode_NoMember ')
-        CP = Country.text
-    except AttributeError:
-
-        CP = "-"
-        pass
-
-    try:
-        certificate = page_soup.find(id=' cphContent_UCMemberFiche1_Certificate_NoMember ')
-        certificate = certificate.text
-    except AttributeError:
-
-        certificate = "-"
-        pass
-
-    try:
-        certifications = page_soup.find(id='cphContent_UCMemberFiche1_Certifications_NoMember')
-        certifications = certifications.text
-    except AttributeError:
-        certifications = "-"
-        pass
-
-    try:
-        URL = page_soup.find(id= 'cphContent_UCMemberFiche1_HLweb_NoMember')
-        URL = URL.text
-    except AttributeError:
-
-        URL = "-"
-        pass
-    try:
-        First_Name = page_soup.find(id='cphContent_UCMemberFiche1_FirstName_NoMember')
-        First_Name = First_Name.text
-    except AttributeError:
-
-        First_Name = "-"
-        pass
-
-
-    try:
-
-        Last_Name = page_soup.find(id='cphContent_UCMemberFiche1_Name_NoMember')
-        Last_Name = Last_Name.text
-    except AttributeError:
-
-        Last_Name = "-"
-        pass
-    try:
-        Title = page_soup.find(id='cphContent_UCMemberFiche1_Titre_NoMember')
-        Title = Title.text
-    except AttributeError:
-
-        Title = "-"
-        pass
-
-    try:
-        Number = page_soup.find(id='cphContent_UCMemberFiche1_TelProf1_NoMember')
-        Number = Number.text
-    except AttributeError:
-
-        Number = "-"
-        pass
-
-
-    array=[]
-    try:
-
-        Frozen = page_soup.find(id='cphContent_UCMemberFiche1_productFrozen_NoMember')
-        Frozen = Frozen.text
-
-        for name in Frozen.split(','):
-            name = name.strip()
-            array.append(name)
-
-
-    except AttributeError:
-
-        Frozen = "-"
-        pass
-    while (len(array)<20):
-        array.append(" ")
-
-
-
-
-    try:
-        NonFrozen = page_soup.find(id='cphContent_UCMemberFiche1_productNonFrozen_NoMember')
-        NonFrozen = NonFrozen.text
-    except AttributeError:
-
-        NonFrozen = "-"
-        pass
-
-
-
-
-
-
-
-    f.write("{0},{1},{2},{3},{4},{5},{6},{7},{8},{9},{10},{11},{12},{13}, {14}\n".format(str(number - 1), comp_name,
-                                                                                          Country, address, state, CP,
-                                                                                          certificate, certifications,
-                                                                                          URL, First_Name, Last_Name,
-                                                                                          Title, Number,  str(array)[1:-1],
-                                                                                          NonFrozen))
  
