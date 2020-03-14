@@ -18,12 +18,11 @@ f.write(header)
 number = 0
 root = 'https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=' + str(number)
 
-for i in range(20):
+for i in range(50000):
     root = "https://www.frozenb2b.com/DataBase/DatabaseMemberFiche.aspx?NoFiche=" + str(number)
     number += 1
     print(root)
-
-
+    
     # opening connection and grabbing a page
     uClient = uReq(root)
     page_html = uClient.read()
@@ -81,21 +80,21 @@ for i in range(20):
 
         try:
             address = page_soup.find("span", id='cphContent_UCMemberFiche1_Address_NoMember')
-            address = address.text.replace(",", "")
+            address = address.text.strip().replace(",", "")
         except AttributeError:
             address = "-"
             pass
 
         try:
             city = page_soup.find(id='cphContent_UCMemberFiche1_City_NoMember' )
-            city = city.text.replace(",", "")
+            city = city.text.strip().replace(",", "")
         except AttributeError:
             city = "-"
             pass
 
         try:
             CP = page_soup.find( id='cphContent_UCMemberFiche1_ZipCode_NoMember')
-            CP = CP.text.replace(",", "")
+            CP = CP.text.strip().replace(",", "")
         except AttributeError:
             CP = "-"
             pass
