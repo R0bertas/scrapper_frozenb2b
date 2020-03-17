@@ -33,7 +33,7 @@ for i in range(50000):
     # print(page_soup.body.div)
     try:
         comp_name = page_soup.find(id='cphContent_UCMemberFiche1_Company')
-        comp_name = comp_name.get("value").strip().replace(",", "")
+        comp_name = comp_name.get("value").strip('"').replace(",", "")
         try:
             Country = page_soup.find(id='cphContent_UCMemberFiche1_Country_NoMember')
             Country = Country.text.strip().replace(",", "")
